@@ -1,0 +1,14 @@
+{
+  "buildCommand": "cd frontend && npm install --legacy-peer-deps && npm run build",
+  "outputDirectory": "frontend/.svelte-kit/output/client",
+  "framework": "sveltekit",
+  "env": {
+    "VITE_FIREBASE_API_KEY": "AIzaSyBtpHJ4G2He5ekqrVWs5rulfkOqzbndLDs",
+    "VITE_FIREBASE_PROJECT_ID": "fashion-photoshoot-studio",
+    "VITE_FIREBASE_STORAGE_BUCKET": "fashion-photoshoot-studio.firebasestorage.app",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "282387017759",
+    "VITE_FIREBASE_APP_ID": "1:282387017759:web:7d1df0492aa49a6f85e52a",
+    "VITE_BACKEND_URL": "https://fashion-photoshoot-backend.vercel.app"
+  }
+}
+

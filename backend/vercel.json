@@ -1,0 +1,12 @@
+{
+  "runtime": "python@3.11",
+  "buildCommand": "pip install -r requirements.txt",
+  "env": {
+    "FIREBASE_PROJECT_ID": "fashion-photoshoot-studio",
+    "FIREBASE_CREDENTIALS_PATH": "./firebase-credentials.json",
+    "NANO_BANANA_API_KEY": "demo_key",
+    "NANO_BANANA_MODEL_ID": "juggernaut-x-645",
+    "PYTHONENV": "production",
+    "FRONTEND_URL": "https://fashion-photoshoot.vercel.app"
+  }
+}

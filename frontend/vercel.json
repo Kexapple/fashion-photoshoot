@@ -1,5 +1,5 @@
 {
-  "name": "fashion-photoshoot-frontend",
-  "buildCommand": "npm run build",
-  "framework": "sveltekit"
+  "buildCommand": "npm install --legacy-peer-deps && npm run build",
+  "framework": "sveltekit",
+  "outputDirectory": ".svelte-kit/output/client"
 }
