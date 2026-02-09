@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: fashion-photoshoot-backend
+    runtime: python
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port 8000
+    envVars:
+      - key: FIREBASE_PROJECT_ID
+        value: fashion-photoshoot-studio
+      - key: FIREBASE_CREDENTIALS_PATH
+        value: ./firebase-credentials.json
+      - key: NANO_BANANA_API_KEY
+        value: demo_key
+      - key: NANO_BANANA_MODEL_ID
+        value: juggernaut-x-645
+      - key: PYTHONENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://fashion-photoshoot.vercel.app
+      - key: PORT
+        value: "8000"
+    repo: https://github.com/Kexapple/fashion-photoshoot
+    branch: main
+    rootDir: backend
+    region: oregon
+    plan: free
+    autoDeploy: true
+
+  - type: static_site
+    name: fashion-photoshoot-frontend
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    publishPath: .svelte-kit/output/client
+    envVars:
+      - key: VITE_FIREBASE_API_KEY
+        value: AIzaSyBtpHJ4G2He5ekqrVWs5rulfkOqzbndLDs
+      - key: VITE_FIREBASE_PROJECT_ID
+        value: fashion-photoshoot-studio
+      - key: VITE_FIREBASE_STORAGE_BUCKET
+        value: fashion-photoshoot-studio.firebasestorage.app
+      - key: VITE_FIREBASE_MESSAGING_SENDER_ID
+        value: "282387017759"
+      - key: VITE_FIREBASE_APP_ID
+        value: 1:282387017759:web:7d1df0492aa49a6f85e52a
+      - key: VITE_BACKEND_URL
+        value: https://fashion-photoshoot-backend.onrender.com
+    repo: https://github.com/Kexapple/fashion-photoshoot
+    branch: main
+    rootDir: frontend
+    region: oregon
+    autoDeploy: true
