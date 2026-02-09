@@ -1,0 +1,107 @@
+﻿ FASHION PHOTOSHOOT STUDIO - DEPLOYMENT GUIDE
+================================================
+
+ COMPLETED:
+   Firebase project created: fashion-photoshoot-studio
+   Web app created with ID: 1:282387017759:web:7d1df0492aa49a6f85e52a
+   Firestore database initialized
+   Cloud Storage bucket created
+   frontend/.env configured with Firebase credentials
+   backend/.env configured with services
+
+NEXT STEPS TO GET YOUR APP LIVE:
+================================
+
+STEP 1: Download Service Account Key (2 minutes)
+
+1. Go to: https://console.firebase.google.com
+2. Select project: fashion-photoshoot-studio
+3. Click Settings (gear icon)  Service Accounts
+4. Click 'Generate New Private Key'
+5. Save file as: backend/firebase-credentials.json
+6. Keep this file PRIVATE - never commit to GitHub!
+
+STEP 2: Test Locally (5 minutes)
+
+Terminal 1 - Backend:
+  cd c:\Space\python\fashion-photoshoot\backend
+  pip install -r requirements.txt
+  python -m uvicorn app.main:app --reload --port 8000
+
+Terminal 2 - Frontend:
+  cd c:\Space\python\fashion-photoshoot\frontend
+  npm install
+  npm run dev
+
+Visit: http://localhost:5173
+
+STEP 3: Push to GitHub (3 minutes)
+
+  cd c:\Space\python\fashion-photoshoot
+  git add .
+  git commit -m 'Initial: Fashion Photoshoot with Firebase'
+  git remote add origin https://github.com/YOUR_USERNAME/fashion-photoshoot.git
+  git branch -M main
+  git push -u origin main
+
+STEP 4: Deploy Backend to Railway (10 minutes)
+
+1. Go to: https://railway.app (sign up free)
+2. Create new project
+3. Import from GitHub, select fashion-photoshoot repo
+4. Set root directory: backend
+5. Add environment variables:
+   - FIREBASE_PROJECT_ID = fashion-photoshoot-studio
+   - FIREBASE_CREDENTIALS_PATH = ./firebase-credentials.json
+   - NANO_BANANA_API_KEY = (optional)
+   - PYTHONENV = production
+   - FRONTEND_URL = (update after Vercel deployment)
+6. Click Deploy
+7. Copy Railway URL (e.g., project-xxx.railway.app)
+
+STEP 5: Deploy Frontend to Vercel (5 minutes)
+
+1. Go to: https://vercel.com (sign up with GitHub)
+2. Import Repository
+3. Select: fashion-photoshoot
+4. Set root directory: frontend
+5. Add environment variables:
+   - VITE_FIREBASE_API_KEY = AIzaSyBtpHJ4G2He5ekqrVWs5rulfkOqzbndLDs
+   - VITE_FIREBASE_AUTH_DOMAIN = fashion-photoshoot-studio.firebaseapp.com
+   - VITE_FIREBASE_PROJECT_ID = fashion-photoshoot-studio
+   - VITE_FIREBASE_STORAGE_BUCKET = fashion-photoshoot-studio.firebasestorage.app
+   - VITE_FIREBASE_MESSAGING_SENDER_ID = 282387017759
+   - VITE_FIREBASE_APP_ID = 1:282387017759:web:7d1df0492aa49a6f85e52a
+   - VITE_BACKEND_URL = https://your-railway-url.railway.app
+6. Click Deploy
+7. Copy Vercel URL (your live app!)
+
+STEP 6: Update Backend with Frontend URL (2 minutes)
+
+1. Go to Railway dashboard
+2. Update environment variable:
+   - FRONTEND_URL = https://your-vercel-app.vercel.app
+3. Redeploy backend
+
+DONE! 
+Your app is now LIVE!
+
+ IMPORTANT SECURITY NOTES:
+- Never commit firebase-credentials.json to GitHub
+- Add to .gitignore: firebase-credentials.json
+- In Railway: Use environment variables, not the file
+- Keep API keys private
+
+ COST ESTIMATE:
+- Vercel: FREE (frontend)
+- Railway: \-10/month (backend)
+- Firebase: FREE (under free tier)
+- Total: ~\-15/month for small projects
+
+ RESOURCES:
+- Firebase Console: https://console.firebase.google.com
+- Railway Dashboard: https://railway.app/dashboard
+- Vercel Dashboard: https://vercel.com/dashboard
+- API Docs: docs/API.md
+- Full Setup Guide: docs/INSTRUCTION.txt
+

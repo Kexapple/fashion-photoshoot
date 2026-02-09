@@ -1,0 +1,483 @@
+================================================================================
+                      SETUP & INSTALLATION GUIDE
+              Fashion Photoshoot Studio - Complete Setup
+================================================================================
+
+This guide will walk you through setting up the entire application from
+scratch, including Firebase, Nano Banana API, and deployment.
+
+================================================================================
+PART 1: FIREBASE SETUP
+================================================================================
+
+1. Create Firebase Project
+   ├─ Go to: https://console.firebase.google.com
+   ├─ Click: "+ Add project"
+   ├─ Enter: "fashion-photoshoot-studio"
+   ├─ Select: Create project
+   └─ Wait for creation to complete
+
+2. Enable Authentication
+   ├─ In Firebase Console, click: Authentication
+   ├─ Click: "Get started"
+   ├─ Select: "Email/Password"
+   │  └─ Enable it
+   ├─ Select: "Google"
+   │  ├─ Enable it
+   │  ├─ Add support email: your.email@gmail.com
+   │  └─ Add project name
+   └─ Review the OAuth consent screen
+
+3. Create Firestore Database
+   ├─ Click: Firestore Database
+   ├─ Click: "Create database"
+   ├─ Select: "Start in test mode"
+   │  └─ (We'll add security rules later)
+   ├─ Choose: Cloud region closest to you
+   └─ Click: "Create"
+
+4. Enable Cloud Storage
+   ├─ Click: Storage
+   ├─ Click: "Get started"
+   ├─ Keep default bucket name
+   ├─ Start in test mode (for development)
+   └─ Create bucket
+
+5. Get Firebase Configuration
+   ├─ Click: Project Settings (gear icon)
+   ├─ Select: "Your apps" tab
+   ├─ Click: </> (Web app)
+   ├─ Register app as: "fashion-app"
+   ├─ Copy the config object under "firebaseConfig"
+   └─ Save for later use
+
+   Your config should look like:
+   ```
+   const firebaseConfig = {
+     apiKey: "AIza...",
+     authDomain: "project.firebaseapp.com",
+     projectId: "project-id",
+     storageBucket: "project.appspot.com",
+     messagingSenderId: "123456789",
+     appId: "1:123456789:web:abc..."
+   };
+   ```
+
+6. Create Service Account Key (for Backend)
+   ├─ Click: Project Settings (gear icon)
+   ├─ Select: "Service accounts" tab
+   ├─ Click: "Generate new private key"
+   ├─ Save the JSON file as: backend/firebase-credentials.json
+   └─ WARNING: Keep this file secret! Never commit to Git!
+
+================================================================================
+PART 2: NANO BANANA API SETUP
+================================================================================
+
+1. Create Nano Banana Account
+   ├─ Go to: https://www.nanobana.com (or your chosen image gen API)
+   ├─ Sign up for free account
+   └─ Verify email
+
+2. Get API Key
+   ├─ Log in to dashboard
+   ├─ Navigate: API Keys section
+   ├─ Copy: Your API key
+   └─ Keep it safe!
+
+3. Choose Model
+   ├─ Browse: Available models
+   ├─ Select: Model suitable for fashion/clothing
+   ├─ Note down: Model ID
+   └─ Test generation (free credits usually provided)
+
+4. Store API Credentials
+   ├─ Add to backend/.env:
+   │  ├─ NANO_BANANA_API_KEY=your-key-here
+   │  └─ NANO_BANANA_MODEL_ID=your-model-id
+   └─ Never commit .env file!
+
+================================================================================
+PART 3: BACKEND SETUP (FastAPI)
+================================================================================
+
+1. Install Python Dependencies
+   ```
+   cd backend
+   pip install -r requirements.txt
+   ```
+
+2. Create Environment File
+   ```
+   cp .env.example .env
+   ```
+
+3. Update .env with Credentials
+   ```
+   nano .env
+   (or use your favorite editor)
+   ```
+
+   Fill in:
+   ├─ Firebase credentials (from Part 1 Step 6)
+   ├─ FIREBASE_PROJECT_ID=your-project-id
+   ├─ FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+   ├─ NANO_BANANA_API_KEY=your-api-key (from Part 2)
+   ├─ NANO_BANANA_MODEL_ID=your-model-id (from Part 2)
+   ├─ FRONTEND_URL=http://localhost:5173 (for local dev)
+   └─ BACKEND_URL=http://localhost:8000
+
+4. Test Backend Locally
+   ```
+   uvicorn app.main:app --reload
+   ```
+
+   Should see:
+   ```
+   Uvicorn running on http://127.0.0.1:8000
+   ```
+
+5. Test API Health
+   ```
+   curl http://localhost:8000/health
+   
+   Response:
+   {"status":"ok","service":"fashion-photoshoot-api"}
+   ```
+
+6. View API Documentation
+   Visit: http://localhost:8000/docs
+   (Interactive Swagger UI)
+
+================================================================================
+PART 4: FRONTEND SETUP (SvelteKit)
+================================================================================
+
+1. Install Node Dependencies
+   ```
+   cd frontend
+   npm install
+   ```
+
+2. Create Environment File
+   ```
+   cp .env.example .env
+   ```
+
+3. Add Firebase Config to .env
+   From Part 1 Step 5, add:
+   ```
+   VITE_FIREBASE_API_KEY=AIza...
+   VITE_FIREBASE_AUTH_DOMAIN=project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=project-id
+   VITE_FIREBASE_STORAGE_BUCKET=project.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+   VITE_FIREBASE_APP_ID=1:123456789:web:abc...
+   VITE_BACKEND_URL=http://localhost:8000
+   ```
+
+4. Test Frontend Locally
+   ```
+   npm run dev
+   ```
+
+   Should see:
+   ```
+   VITE v5.0.0  ready in XXX ms
+   
+   ➜  Local:   http://localhost:5173/
+   ```
+
+5. Open in Browser
+   Visit: http://localhost:5173
+   
+   You should see:
+   ├─ Landing page with "Try Free (3 Images)" button
+   ├─ Login/Sign up links
+   └─ Feature cards
+
+================================================================================
+PART 5: TESTING THE FULL FLOW
+================================================================================
+
+1. Test Anonymous Generation (Free Trial)
+   ├─ Open: http://localhost:5173
+   ├─ Click: "Try Free (3 Images)"
+   ├─ Upload photos
+   ├─ Select article type
+   ├─ Generate
+   └─ Should see generated images
+
+2. Test User Registration
+   ├─ Click: "Login / Sign Up"
+   ├─ Click: "Create Account" tab
+   ├─ Sign up with email (test@example.com / password123)
+   └─ Should redirect to dashboard with 5 credits
+
+3. Test Authenticated Generation
+   ├─ On dashboard, click: "Create New Photoshoot"
+   ├─ Upload images
+   ├─ Generate (should cost 1 credit)
+   ├─ Verify credit balance decreased to 4
+   └─ Generate again to test
+
+4. Monitor Firestore
+   ├─ Open: Firebase Console
+   ├─ Click: Firestore Database
+   ├─ Verify collections created:
+   │  ├─ users/ (with your user document)
+   │  ├─ photoshoots/ (with generated shoots)
+   │  ├─ transactions/ (under users)
+   │  └─ anonUsers/ (if you tested anonymous)
+   └─ View user data to confirm credits changed
+
+5. Check Logs
+   ├─ Backend terminal should show:
+   │  ├─ Token verification logs
+   │  ├─ Generation requests
+   │  └─ Credit deduction logs
+   └─ Frontend console (F12) should show API calls
+
+================================================================================
+PART 6: DEPLOYMENT (Railway)
+================================================================================
+
+## Deploy Backend to Railway
+
+1. Create Railway Account
+   ├─ Go to: https://railway.app
+   ├─ Sign in with GitHub
+   └─ Pick Railway
+
+2. Create New Project
+   ├─ Click: "New Project"
+   ├─ Select: "GitHub Repo"
+   ├─ Authorize Railway with GitHub
+   └─ Select your repository
+
+3. Create Backend Service
+   ├─ In Railway dashboard
+   ├─ Add Service
+   ├─ Choose: "GitHub Repo"
+   ├─ Select: fashion-photoshoot (backend folder)
+   └─ Configure runtime:
+      ├─ Root Directory: backend
+      ├─ Build Command: pip install -r requirements.txt
+      └─ Start Command: gunicorn -w 4 -b 0.0.0.0:8000 app.main:app
+
+4. Set Environment Variables
+   ├─ In Railway dashboard, go to: Variables
+   ├─ Add all variables from backend/.env:
+   │  ├─ FIREBASE_PROJECT_ID
+   │  ├─ FIREBASE_STORAGE_BUCKET
+   │  ├─ NANO_BANANA_API_KEY
+   │  ├─ NANO_BANANA_MODEL_ID
+   │  ├─ FRONTEND_URL (set to your Vercel URL later)
+   │  └─ (all Firebase credentials)
+   └─ Deploy
+
+5. Get Backend URL
+   ├─ In Railway dashboard
+   ├─ Under Deployments, find Live URL
+   ├─ Copy the URL (looks like: project-xxx.railway.app)
+   └─ Save for later
+
+## Deploy Frontend to Vercel
+
+1. Create Vercel Account
+   ├─ Go to: https://vercel.com
+   ├─ Sign in with GitHub
+   └─ Authorize Vercel
+
+2. Import Project
+   ├─ Click: "Add New..."
+   ├─ Select: "Project"
+   ├─ Select your fashion-photoshoot repository
+   ├─ Set Root Directory: frontend
+   └─ Import
+
+3. Set Environment Variables
+   ├─ In Vercel dashboard, go to: Settings > Environment Variables
+   ├─ Add all variables from frontend/.env.example:
+   │  ├─ VITE_FIREBASE_API_KEY
+   │  ├─ VITE_FIREBASE_PROJECT_ID
+   │  ├─ VITE_BACKEND_URL (set to your Railway URL)
+   │  └─ (all Firebase config)
+   └─ Deploy
+
+4. Update Backend FRONTEND_URL
+   ├─ Go back to Railway dashboard
+   ├─ Update FRONTEND_URL to your Vercel URL
+   └─ Redeploy backend
+
+5. Test Production
+   ├─ Visit your Vercel frontend URL
+   ├─ Test complete flow
+   ├─ Check error logs if issues
+   └─ Monitor Firestore for data
+
+================================================================================
+PART 7: SECURITY RULES (Firestore & Storage)
+================================================================================
+
+## Firestore Security Rules
+
+Go to: Firebase Console > Firestore > Rules
+
+Replace with:
+```
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only read/write their own data
+    match /users/{userId} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    
+    // Transactions accessible to owner only
+    match /users/{userId}/transactions/{document=**} {
+      allow read: if request.auth.uid == userId;
+      allow write: if false; // Backend-only
+    }
+    
+    // Photoshoots accessible to owner
+    match /photoshoots/{userId}/{document=**} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    
+    // Anonymous users data
+    match /anonUsers/{document=**} {
+      allow read: if true; // Only IP-hashed data
+      allow write: if false; // Backend-only
+    }
+  }
+}
+```
+
+## Firebase Storage Security Rules
+
+Go to: Firebase Console > Storage > Rules
+
+Replace with:
+```
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Uploaded images - accessible to owner
+    match /uploaded-images/{userId}/{allPaths=**} {
+      allow read, write: if request.auth.uid == userId;
+    }
+    
+    // Generated images - accessible to owner
+    match /generated-images/{userId}/{allPaths=**} {
+      allow read: if request.auth.uid == userId;
+      allow write: if false; // Backend-only
+    }
+    
+    // Anonymous images public (optional)
+    match /generated-images/anon-{hash}/{allPaths=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
+```
+
+================================================================================
+PART 8: OPTIONAL - PAYMENT GATEWAY SETUP
+================================================================================
+
+## JazzCash Integration
+
+1. Register as JazzCash Merchant
+   ├─ Go to: https://www.jazzcash.com.pk
+   ├─ Business > Merchant Services
+   ├─ Register account
+   └─ Get merchant credentials
+
+2. Store Credentials
+   ```
+   In backend/.env:
+   JAZZCASH_MERCHANT_ID=your-merchant-id
+   JAZZCASH_PASSWORD=your-password
+   JAZZCASH_INTEGRITY_KEY=your-key
+   ```
+
+## EasyPaisa Integration
+
+1. Register as EasyPaisa Merchant
+   ├─ Go to: https://www.easypaisa.com.pk
+   ├─ Business > Merchant Portal
+   ├─ Register and verify
+   └─ Get credentials
+
+2. Store Credentials
+   ```
+   In backend/.env:
+   EASYPAISA_MERCHANT_ID=your-id
+   EASYPAISA_PASSWORD=your-password
+   ```
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+Issue: "Firebase credentials not found"
+├─ Solution: Ensure firebase-credentials.json exists in backend/
+└─ Or set env variables instead
+
+Issue: "Nano Banana API key invalid"
+├─ Solution: Check API key is correct in backend/.env
+└─ Test with curl to verify
+
+Issue: "CORS errors on frontend"
+├─ Solution: Update ALLOWED_ORIGINS in backend/app/config.py
+├─ Add your Vercel frontend URL
+└─ Restart backend
+
+Issue: "Storage permission denied"
+├─ Solution: Apply Firestore/Storage security rules (Part 7)
+└─ Verify security rules are deployed
+
+Issue: "Vercel build failing"
+├─ Solution: Check frontend/.env is set in Vercel dashboard
+└─ Check Root Directory is set to "frontend"
+
+================================================================================
+SUPPORT & RESOURCES
+================================================================================
+
+Documentation:
+├─ Architecture: docs/ARCHITECTURE.md
+├─ API Reference: docs/API.md
+├─ Frontend README: frontend/README.md
+└─ Backend README: backend/README.md
+
+External Links:
+├─ Firebase Docs: https://firebase.google.com/docs
+├─ SvelteKit Docs: https://kit.svelte.dev
+├─ FastAPI Docs: https://fastapi.tiangolo.com
+├─ Nano Banana: https://www.nanobana.com
+├─ Railway: https://railway.app/docs
+└─ Vercel: https://vercel.com/docs
+
+Helpful Contacts:
+├─ Firebase Support: https://firebase.google.com/support
+├─ Railway Support: https://support.railway.app
+└─ Vercel Support: https://vercel.com/support
+
+================================================================================
+That's it! Your Fashion Photoshoot Studio is ready to use! 🎉
+
+For production, remember to:
+✓ Rotate API keys regularly
+✓ Monitor logs for errors
+✓ Set proper CORS origins
+✓ Enable HTTPS everywhere
+✓ Regular database backups
+✓ Monitor costs on all services
+
+Happy building! 🚀
+================================================================================
